@@ -1,6 +1,5 @@
 
 import { BannerService } from "@/service/banner.service";
-import { Constants } from "@/constants/constants"
 
 // declare class AuthService
 const bannerService = new BannerService();
@@ -10,14 +9,14 @@ const bannerStore = {
     namespaced: true,
 
     state: {
-        loading: false,
+        loadingApp: false,
         // save cake data
         banner: []
     },
 
     mutations: {
-        is_loading(state, loading) {
-            state.loading = loading;
+        isLoading(state, loading) {
+            state.loadingApp = loading;
         },
 
         setCakeData(state, data) {
@@ -25,7 +24,7 @@ const bannerStore = {
         },
 
         addCakeBanner(state, newData) {
-            state.banner.push(newData)
+            state.banner = [...state.banner, newData ]
         },
 
         updateCakeBanner(state, update) {
@@ -38,89 +37,91 @@ const bannerStore = {
         deleteCakeBanner(state, id) {
             state.banner = state.banner.filter(item => item.id !== id);
         }
-
-    },
-
-    getters: {
-        //TODO: Computed properties
-        isLoading: state => state.loading,
-        dataBanner: state => state.banner,
-        getBannerById: (state) => (id) => {
-            return state.banner.find(b => b.id === id)
-        }
     },
 
     actions: {
 
-        async getAll({ commit },{ params }) {
+        async getAll({ commit }, { params }) {
             try {
-                commit('is_loading', true)
+                commit('isLoading', true)
                 const response = await bannerService.getBanners(`/api/admins/banner?${params}`)
                 if (response) {
-                    commit('setCakeData', [response])
-                    commit('is_loading', false);
+                    commit('setCakeData', response)
+                    // commit('setBannerText', response)
+                    setTimeout(() => {
+                        commit('isLoading', false);
+                    },1000)
                 }
             } catch (error) {
-                commit('is_loading', true)
+                commit('isLoading', true)
                 throw new Error(error.message)
             }
         },
 
         async bannerDetail ({ commit },{ id } ) {
             try {
-                commit('is_loading', true)
+                commit('isLoading', true)
                 const response = await bannerService.getBanner(`/api/admins/banner/show/${id}`)
                 if (response) {
                     commit('setCakeData', [response])
-                    commit('is_loading', false);
+                    commit('isLoading', false);
                 }
             } catch (error) {
-                commit('is_loading', true)
+                commit('isLoading', true)
                 throw new Error(error.message)
             }
         },
 
-        async createBanner ({ commit },{ params } ) {
+        async createBanner ({ commit }, params ) {
             try {
-                commit('is_loading', true)
+                commit('isLoading', true)
                 const response = await bannerService.createBanner('/api/admins/banner/store/',params)
                 if (response) {
                     commit('addCakeBanner', response)
-                    commit('is_loading', false);
+                    commit('isLoading', false);
                 }
             } catch (error) {
-                commit('is_loading', true)
+                commit('isLoading', true)
                 throw new Error(error.message)
             }
         },
 
-        async updateBanner ({commit},{ id, params }) {
+        async updateBanner ({commit}, params) {
             try {
-                commit('is_loading', true)
-                const response = await bannerService.updateBanner(`/api/admins/banner/update/${id}`,params)
+                commit('isLoading', true)
+                const response = await bannerService.updateBanner(`/api/admins/banner/update`,params)
                 if (response) {
                     commit('updateCakeBanner', response)
-                    commit('is_loading', false);
+                    commit('isLoading', false);
                 }
             } catch (error) {
-                commit('is_loading', true)
+                commit('isLoading', true)
                 throw new Error(error.message)
             }
         },
 
-        async deleteBanner ({commit},{ id }) {
+        async deleteBanner ({commit}, id ) {
             try {
-                commit('is_loading', true)
-                const response = await bannerService.updateBanner(`/api/admins/banner/destroy/${id}`)
+                commit('isLoading', true)
+                const response = await bannerService.deleteBanner(`/api/admins/banner/destroy/${id}`)
                 if (response) {
                     commit('deleteCakeBanner', response)
-                    commit('is_loading', false);
+                    commit('isLoading', false);
                 }
             } catch (error) {
-                commit('is_loading', true)
+                commit('isLoading', true)
                 throw new Error(error.message)
             }
-        },
+        }
+    },
+
+    getters: {
+        //TODO: Computed properties
+        loadData: (state) => state.loadingApp,
+        dataBanner: (state) => state.banner,
+        getBannerById: (state) => (id) => {
+            return state.banner.find(b => b.id === id)
+        }
     }
 }
 export default bannerStore;

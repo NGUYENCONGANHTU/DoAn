@@ -31,16 +31,16 @@ export class BannerService extends APIService {
         });
     }
 
-    async updateBanner(url, id, data) {
-        return this.put(`${url}/${id}`,data)
+    async updateBanner(url, data) {
+        return this.post(`${url}`,data)
         .then((response) => response?.data.data)
         .catch((error) => {
             throw error?.response?.data;
         });
     }
 
-    async deleteBanner(url, id) {
-        return this.delete(`${url}/${id}`)
+    async deleteBanner(url) {
+        return this.delete(`${url}`)
         .then((response) => response?.data.data)
         .catch((error) => {
             throw error?.response?.data;

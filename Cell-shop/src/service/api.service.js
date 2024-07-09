@@ -62,7 +62,6 @@ export class APIService {
         return axios({
             method: "delete",
             url: this.baseURL + url,
-            data: data,
             headers: this.getAccessToken() ? this.getHeaders() : {},
             ...config,
         });

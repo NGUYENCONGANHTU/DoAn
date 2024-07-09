@@ -6,6 +6,7 @@ const emit = defineEmits(["closeModal "])
 
 const props = defineProps({
   visible: { type: Boolean, required: true },
+  id: { type: Number, required:true }
 })
 
 </script>
@@ -15,10 +16,10 @@ const props = defineProps({
    <div class="modal" v-if="props.visible" @click.self="$emit('closeModal')">
     <div class="modal-content" @click.stop>
       <div class="modal-header">
-        <h4 class="modal-title">Create</h4>
+        <h4 class="modal-title"> {{ props.id > 0 ? 'Edit' : 'Create' }} </h4>
         <span class="close" @click="$emit('closeModal')">&times;</span>
       </div>
-      <div class="mx-3">
+      <div class="mx-3 modal-body">
         <slot></slot>
       </div>
     </div>
@@ -57,6 +58,11 @@ const props = defineProps({
   float: right;
   font-size: 28px;
   font-weight: bold;
+}
+
+.modal-body {
+  max-height: 85vh; /* Giới hạn chiều cao tối đa của nội dung */
+  overflow-y: auto; /* Kích hoạt thanh cuộn dọc khi nội dung quá dài */
 }
 
 .close:hover,

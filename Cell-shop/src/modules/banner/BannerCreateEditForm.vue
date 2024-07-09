@@ -17,9 +17,9 @@
             </div>
             <div class="col-12 col-md-6 position-relative mt-3">
                 <upload-file :Ref="`inputValueRef`" @upload-from="handleUploadFile" />
-                <!-- <div v-show="model.id > 0" class="position-absolute item-edit-images">
-                    <img :src="LINKING + model.images" :class="`${model.id  ? 'item-images' : ''}`"  />
-                </div> -->
+                <div v-show="model.id > 0" :class="`${model.id ? 'item-edit-images' : ''}`">
+                    <img :src="URL + '/' + model.images" :class="`${ model.id  ? 'item-images' : ''}`"  />
+                </div>
             </div>
             <div class="col-6 ">
                 <label for="inputAddress" class="form-label fw-bold mt-3">Status</label>
@@ -58,7 +58,7 @@
     </div>
 </template>
 <script>
-import { defineComponent, ref, reactive, watch, toRefs } from "vue"
+import { defineComponent, ref, reactive, watchEffect, toRefs, onMounted } from "vue"
 import { useForm } from 'vee-validate';
 import { useRouter } from 'vue-router';
 import { toast } from "vue3-toastify";
@@ -69,6 +69,7 @@ import CKEditor from "@ckeditor/ckeditor5-vue";
 import uploadFile from "@/components/uploadFile.vue";
 import { convertFormData } from "./constants";
 import { useStore } from 'vuex';
+import { URL_API } from "@/constants/env";
 
 export default defineComponent({
     components: {
@@ -77,12 +78,17 @@ export default defineComponent({
     },
     props: {
        data: {
-            type: {}
+            type: Object,
+            default: {}
+        },
+        onClose : {
+            type: Function
         }
     },
     setup(props) {
         // declare store
         const store = useStore();
+        const URL = ref(URL_API)
         const { handleSubmit, values } = useForm();
         const router = useRouter();
         // default value
@@ -120,26 +126,53 @@ export default defineComponent({
                 try {
                     const fomData = convertFormData(model);
                     if(model.id){
-
+                        await store.dispatch('banner/updateBanner',fomData)
+                         router.push('/banner').then(() => {
+                            toast.success(`status: ${Constants.OK200}: edit banner successfully`)
+                        })
                     }else{
-                        await store.dispatch('banner/createBanner', { params: fomData })
+                        await store.dispatch('banner/createBanner', fomData)
                         router.push('/banner').then(() => {
                             toast.success(`status: ${Constants.OK200}: create banner successfully`)
                         })
                     }
+                    props.onClose(false)
                 } catch (error) {
-                    toast.error(`status: ${Constants.Error}: create banner failed!!!`)
+                    toast.error(`status: ${Constants.Error}: api call banner failed!!!`)
                 }
             })();
         };
+
+        // TODO: lang listens for changes in data
+        watchEffect(() => {
+            if(props.data){
+                model.id = props.data.id,
+                model.name = props.data.name,
+                model.images = props.data.images,
+                model.description = props.data.description,
+                model.link = props.data.link
+            }
+        });
 
         return {
             submitForm,
             model,
             handleUploadFile,
+            URL,
             ...toRefs(config)
         }
     }
 });
 </script>
-<style scoped></style>
+<style scoped>
+    .item-edit-images{
+       border: 1px solid #4b4b4b;
+       width: 40%;
+       height: 100px;
+    }
+    .item-images{
+        width: 100%;
+        height:  100%;
+        object-fit: contain;
+    }
+</style>
