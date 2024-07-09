@@ -1,35 +1,53 @@
 <template>
-  <loading :active="isLoading" :can-cancel="false">
+  <div v-if="isLoading" class="loading">
+    <div class="spinner">
+      <div class="spinner-border text-primary" role="status" />
+    </div>
+  </div>
+  <div >
     <slot></slot>
-  </loading>
+  </div>
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from "vue";
-import { useLoading } from 'vue-loading-overlay';
-export default defineComponent ({
+import { defineComponent } from "vue";
+export default defineComponent({
   props: {
     isLoading: {
       type: Boolean,
-      required: true
-    }
+      required: false,
+    },
   },
-  setup(props){
-    const { show,hide } = useLoading();
-    onMounted(() => {
-      if(props.isLoading){
-       setTimeout(() => {
-         show({
-          color: 'blue',
-          width: 35,
-          height: 35,
-        })
-       }, 1000)
-      }else{
-        hide
-      }
-    })
-  }
-  
 });
 </script>
+<style scoped>
+.loading {
+ position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(255 255 255 / 80%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.loading > .spinner {
+  position: absolute;
+  top: 50%;
+  left: 60%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>
