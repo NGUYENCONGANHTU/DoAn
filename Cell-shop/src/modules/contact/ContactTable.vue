@@ -31,31 +31,12 @@
             <td>{{ contact.phone }}</td>
             <td>{{ contact.email }}</td>
             <td>
-              <span
-                v-if="contact.status == 1"
-                class="badge rounded-pill bg-success"
-                >Đang hoạt động</span
-              >
-              <span v-else class="badge rounded-pill bg-secondary"
-                >Không hoạt động</span
-              >
-            </td>
-            <!-- <td>{{ formatDate(contact.created_at) }}</td> -->
-            <td>
-              <font-awesome-icon
-                :icon="['far', 'eye']"
-                class="text-warning pointer"
-              />
-              <font-awesome-icon
-                :icon="['fas', 'link']"
-                @click="setDataDetail(contact.id)"
-                class="text-primary mx-3 pointer"
-              />
-              <font-awesome-icon
-                :icon="['fas', 'trash']"
-                @click="confirmDelete(contact)"
-                class="text-danger pointer"
-              />
+              <span v-if="contact.status == 1" class="badge rounded-pill bg-success">Đang hoạt động</span>
+              <span v-else class="badge rounded-pill bg-secondary">Không hoạt động</span>
+              <font-awesome-icon :icon="['far', 'eye']" class="text-warning pointer" />
+              <font-awesome-icon :icon="['fas', 'link']" @click="setDataDetail(contact.id)"
+                class="text-primary mx-3 pointer" />
+              <font-awesome-icon :icon="['fas', 'trash']" @click="confirmDelete(contact)" class="text-danger pointer" />
             </td>
           </tr>
         </tbody>
@@ -63,11 +44,7 @@
     </div>
   </async-loading>
   <!-- thêm và chỉnh sửa liên hệ -->
-  <modal
-    :visible="isOpen"
-    :id="dataDetail.id || null"
-    @closeModal="onClose(false)"
-  >
+  <modal :visible="isOpen" :id="dataDetail.id || null" @closeModal="onClose(false)">
     <contacts-create-edit-form :data="dataDetail" :onClose="onClose" />
   </modal>
 </template>
@@ -108,11 +85,6 @@ export default defineComponent({
 
     const loading = computed(() => store.getters["contact/loadData"]);
 
-    // const formatDate = (date) => {
-    //   const convertDate = date.toString();
-    //   return convertDate.substring(0, 10) + " " + convertDate.substring(11, 19);
-    // };
-
     const loadData = () => {
       onReload();
     };
@@ -136,7 +108,6 @@ export default defineComponent({
       onClose,
       isOpen,
       onShow,
-      // formatDate,
       loading,
       loadData,
       dataDetail,
