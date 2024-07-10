@@ -1,17 +1,17 @@
 
-import { BannerService } from "@/service/banner.service";
+import { ProductService } from "@/service/product.service";
 
-// declare class AuthService
-const bannerService = new BannerService();
+// declare class ProductService
+const productService = new ProductService();
 
-const bannerStore = {
+const productRootStore = {
     //Allow modules to have namespace to avoid conflicts with other modules
     namespaced: true,
 
     state: {
         loadingApp: false,
         // save cake data
-        banner: []
+        product: []
     },
 
     mutations: {
@@ -20,22 +20,22 @@ const bannerStore = {
         },
 
         setCakeData(state, data) {
-            state.banner = data
+            state.product = data
         },
 
-        addCakeBanner(state, newData) {
-            state.banner = [...state.banner, newData ]
+        addCakeProduct(state, newData) {
+            state.product = [...state.product, newData ]
         },
 
-        updateCakeBanner(state, update) {
-            const index = state.banner.findIndex(item => item.id === update.id);
+        updateCakeProduct(state, update) {
+            const index = state.product.findIndex(item => item.id === update.id);
             if(index !== -1){
-                state.banner[index] = update
+                state.product[index] = update
             }
         },
 
-        deleteCakeBanner(state, id) {
-            state.banner = state.banner.filter(item => item.id !== id);
+        deleteCakeProduct(state, id) {
+            state.product = state.product.filter(item => item.id !== id);
         }
     },
 
@@ -47,7 +47,7 @@ const bannerStore = {
                 const queryString = Object.keys(params)
                 .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
                 .join('&');
-                const response = await bannerService.getBanners(`/api/admins/banner?${ queryString }`)
+                const response = await productService.getProducts(`/api/admins/product?${ queryString }`)
                 if (response) {
                     commit('setCakeData', response)
                     setTimeout(() => {
@@ -60,10 +60,10 @@ const bannerStore = {
             }
         },
 
-        async bannerDetail ({ commit },{ id } ) {
+        async productDetail ({ commit },{ id } ) {
             try {
                 commit('isLoading', true)
-                const response = await bannerService.getBanner(`/api/admins/banner/show/${id}`)
+                const response = await productService.getProduct(`/api/admins/product/show/${id}`)
                 if (response) {
                     commit('setCakeData', [response])
                     commit('isLoading', false);
@@ -74,12 +74,12 @@ const bannerStore = {
             }
         },
 
-        async createBanner ({ commit }, params ) {
+        async createProduct ({ commit }, params ) {
             try {
                 commit('isLoading', true)
-                const response = await bannerService.createBanner('/api/admins/banner/store/',params)
+                const response = await productService.createProduct('/api/admins/product/store/',params)
                 if (response) {
-                    commit('addCakeBanner', response)
+                    commit('addCakeProduct', response)
                     commit('isLoading', false);
                 }
             } catch (error) {
@@ -88,12 +88,12 @@ const bannerStore = {
             }
         },
 
-        async updateBanner ({commit}, params) {
+        async updateProduct ({commit}, params) {
             try {
                 commit('isLoading', true)
-                const response = await bannerService.updateBanner(`/api/admins/banner/update`,params)
+                const response = await productService.updateProduct(`/api/admins/product/update`,params)
                 if (response) {
-                    commit('updateCakeBanner', response)
+                    commit('updateCakeProduct', response)
                     commit('isLoading', false);
                 }
             } catch (error) {
@@ -102,12 +102,12 @@ const bannerStore = {
             }
         },
 
-        async deleteBanner ({commit}, id ) {
+        async deleteProduct ({commit}, id ) {
             try {
                 commit('isLoading', true)
-                const response = await bannerService.deleteBanner(`/api/admins/banner/destroy/${id}`)
+                const response = await productService.deleteProduct(`/api/admins/product/destroy/${id}`)
                 if (response) {
-                    commit('deleteCakeBanner', response)
+                    commit('deleteCakeProduct', response)
                     commit('isLoading', false);
                 }
             } catch (error) {
@@ -120,10 +120,10 @@ const bannerStore = {
     getters: {
         //TODO: Computed properties
         loadData: (state) => state.loadingApp,
-        dataBanner: (state) => state.banner,
-        getBannerById: (state) => (id) => {
-            return state.banner.find(b => b.id === id)
+        dataProduct: (state) => state.product,
+        getProductById: (state) => (id) => {
+            return state.product.find(b => b.id === id)
         }
     }
 }
-export default bannerStore;
+export default productRootStore;

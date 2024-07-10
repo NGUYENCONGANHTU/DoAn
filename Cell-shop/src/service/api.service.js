@@ -3,11 +3,12 @@
  */
 import axios from "axios";
 import Cookies from "js-cookie";
-
+import router from '@/router/index';
 export class APIService {
 
     constructor(baseURL) {
         this.baseURL = baseURL;
+        this.router = router;
         this.initInterceptors();
     }
 
@@ -93,6 +94,9 @@ export class APIService {
             (error) => {
                 if(error.response.status === 401){
                     // reset token
+                    this.router.push('/login').then(() => {
+                        location.reload()
+                    });
                 }else if (error.response.status === 403){
                     // to => page 403
                 }

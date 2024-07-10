@@ -1,0 +1,201 @@
+<template>
+  <div>
+    <Form class="row g-3" enctype="multipart/form-data" @submit="submitForm">
+      <div class="col-md-6">
+        <label
+          for="inputEmail4"
+          class="form-label fw-bold mt-3 has-required-sign"
+        >
+          Name <span class="mx-1 text-danger">*</span>
+        </label>
+        <Field
+          type="text"
+          v-model="model.name"
+          class="form-control input-admin-form"
+          name="name"
+          placeholder="Nhập Name.."
+          rules="required"
+        />
+        <ErrorMessage class="text-danger" name="name" />
+      </div>
+
+      <div class="col-6">
+        <label for="inputAddress" class="form-label fw-bold mt-3">Status</label>
+        <div class="d-flex">
+          <div class="form-check">
+            <input
+              class="form-check-input label-text mt-2"
+              type="radio"
+              name="radio"
+              id="radio1"
+              value="1"
+              v-model="model.status"
+            />
+            <label class="form-check-label label-text" for="radio1">
+              Hoạt Động
+            </label>
+          </div>
+          <div class="form-check mx-3">
+            <input
+              class="form-check-input label-text mt-2"
+              type="radio"
+              name="radio"
+              id="radio2"
+              value="0"
+              v-model="model.status"
+              checked
+            />
+            <label class="form-check-label label-text" for="radio2">
+              Không hoạt Động
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 mt-3">
+        <div class="editor">
+          <label for="inputAddress" class="form-label fw-bold mt-3"
+            >Description</label
+          >
+          <ckeditor
+            :editor="editor"
+            v-model="model.description"
+            :config="editorConfig"
+          />
+        </div>
+      </div>
+
+      <div
+        class="d-flex justify-content-center align-items-center mt-5 mb-3 w-100"
+      >
+        <button type="submit" class="btn btn-primary btn-base btn-form-active">
+          {{ model.id ? "Edit" : "Add" }}
+        </button>
+        <button
+          type="button"
+          @click="onClearForm"
+          class="btn btn-danger btn-base btn-form-active mx-2"
+        >
+          Clear
+        </button>
+      </div>
+    </Form>
+  </div>
+</template>
+
+<script>
+import { defineComponent, ref, reactive, watchEffect, toRefs } from "vue";
+import { useForm } from "vee-validate";
+import { useRouter } from "vue-router";
+import { toast } from "vue3-toastify";
+import { Constants } from "@/constants/constants";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import CKEditor from "@ckeditor/ckeditor5-vue";
+import { useStore } from "vuex";
+
+export default defineComponent({
+  components: {
+    ckeditor: CKEditor.component,
+  },
+  props: {
+    data: {
+      type: Object,
+      default: () => ({}),
+    },
+    onClose: {
+      type: Function,
+    },
+  },
+  setup(props) {
+    // declare store
+    const store = useStore();
+    const { handleSubmit } = useForm();
+    const router = useRouter();
+
+    // default value
+    const model = reactive({
+      id: "",
+      name: "",
+      status: 0,
+      description: "",
+    });
+
+    // config
+    const config = reactive({
+      editor: ClassicEditor,
+      editorConfig: {
+        toolbar: [
+          "heading",
+          "|",
+          "bold",
+          "italic",
+          "link",
+          "bulletedList",
+          "numberedList",
+          "blockQuote",
+        ],
+      },
+    });
+
+    const submitForm = handleSubmit(async () => {
+      try {
+        if (model.id) {
+          await store.dispatch("trademark/updateTrademark", model);
+          router.push("/trademark").then(() => {
+            toast.success(
+              `status: ${Constants.OK200}: edit trademark successfully`
+            );
+          });
+        } else {
+          await store.dispatch("trademark/createTrademark", model);
+          router.push("/trademark").then(() => {
+            toast.success(
+              `status: ${Constants.OK200}: create trademark successfully`
+            );
+          });
+        }
+        props.onClose(false);
+      } catch (error) {
+        toast.error(`status: ${Constants.Error}: api call trademark failed!!!`);
+      }
+    });
+
+    // Watch for changes in props.data
+    watchEffect(() => {
+      if (props.data) {
+        model.id = props.data.id || "";
+        model.name = props.data.name || "";
+        model.status = props.data.status || 0;
+        model.description = props.data.description || "";
+      }
+    });
+
+    const onClearForm = () => {
+      model.id = "";
+      model.name = "";
+      model.status = 0;
+      model.description = "";
+    };
+
+    return {
+      submitForm,
+      model,
+      onClearForm,
+      ...toRefs(config),
+    };
+  },
+});
+</script>
+
+<style scoped>
+.item-edit-images {
+  border: 1px solid #4b4b4b;
+  width: 40%;
+  height: 100px;
+}
+.item-images {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+</style>
