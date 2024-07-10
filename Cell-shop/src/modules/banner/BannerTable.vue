@@ -1,7 +1,6 @@
 <template>
   <async-loading :isLoading="loading">
-    <div class="card">
-      <div class="card-header">
+    <div class="card-header">
         <h3 class="card-title">List Banner</h3>
         <div class="card-tools">
           <button type="button" @click="onShow" class="btn btn-primary">
@@ -73,7 +72,6 @@
           </tbody>
         </table>
       </div>
-    </div>
   </async-loading>
   <!-- add banner and edit banner -->
   <modal :visible="isOpen" :id="dataDetail.id" @closeModal="onClose(false)">

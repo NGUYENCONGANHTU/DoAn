@@ -122,7 +122,7 @@ export default defineComponent({
       isActive,
       toggleClass,
       MENU_DEFAULT_APP,
-      userInfo
+      userInfo,
     };
   },
 });
