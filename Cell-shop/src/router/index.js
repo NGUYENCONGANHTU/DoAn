@@ -32,6 +32,10 @@ const routes = [
         path: "/contact",
         component: () => import("@/views/contact/index.vue"),
       },
+      {
+        path: "/user",
+        component: () => import("@/views/user/index.vue"),
+      },
     ],
   },
 ];
