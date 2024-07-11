@@ -32,7 +32,7 @@ export class ProductImageService extends APIService {
     }
 
     async updateProductImage(url, data) {
-        return this.put(`${url}`,data)
+        return this.post(`${url}`,data)
         .then((response) => response?.data.data)
         .catch((error) => {
             throw error?.response?.data;

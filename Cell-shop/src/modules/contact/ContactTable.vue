@@ -16,27 +16,46 @@
       <table class="table table-hover text-nowrap">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Tên Khách Hàng</th>
-            <th>Số điện thoại</th>
-            <th>Email</th>
-            <th>Trạng Thái</th>
-            <th>Ngày</th>
+            <th class="itemTH">ID</th>
+            <th class="itemTH">Tên Khách Hàng</th>
+            <th class="itemTH">Số điện thoại</th>
+            <th class="itemTH">Email</th>
+            <th class="itemTH">Trạng Thái</th>
+            <th class="itemTH">Ngày</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="contact in data" :key="contact.id">
-            <td>{{ contact.id }}</td>
-            <td>{{ contact.name }}</td>
-            <td>{{ contact.phone }}</td>
-            <td>{{ contact.email }}</td>
+            <td class="itemTd">{{ contact.id }}</td>
+            <td class="itemTd">{{ contact.name }}</td>
+            <td class="itemTd">{{ contact.phone }}</td>
+            <td class="itemTd">{{ contact.email }}</td>
             <td>
-              <span v-if="contact.status == 1" class="badge rounded-pill bg-success">Đang hoạt động</span>
-              <span v-else class="badge rounded-pill bg-secondary">Không hoạt động</span>
-              <font-awesome-icon :icon="['far', 'eye']" class="text-warning pointer" />
-              <font-awesome-icon :icon="['fas', 'link']" @click="setDataDetail(contact.id)"
-                class="text-primary mx-3 pointer" />
-              <font-awesome-icon :icon="['fas', 'trash']" @click="confirmDelete(contact)" class="text-danger pointer" />
+              <span
+                v-if="contact.status == 1"
+                class="badge rounded-pill bg-success"
+                >Đang hoạt động</span
+              >
+              <span v-else class="badge rounded-pill bg-secondary"
+                >Không hoạt động</span
+              >
+            </td>
+            <td class="itemTd">{{ formatDate(contact.created_at) }}</td>
+            <td class="itemTd">
+              <font-awesome-icon
+                :icon="['far', 'eye']"
+                class="text-warning pointer"
+              />
+              <font-awesome-icon
+                :icon="['fas', 'link']"
+                @click="setDataDetail(contact.id)"
+                class="text-primary mx-3 pointer"
+              />
+              <font-awesome-icon
+                :icon="['fas', 'trash']"
+                @click="confirmDelete(contact)"
+                class="text-danger pointer"
+              />
             </td>
           </tr>
         </tbody>
@@ -44,7 +63,11 @@
     </div>
   </async-loading>
   <!-- thêm và chỉnh sửa liên hệ -->
-  <modal :visible="isOpen" :id="dataDetail.id || null" @closeModal="onClose(false)">
+  <modal
+    :visible="isOpen"
+    :id="dataDetail.id || null"
+    @closeModal="onClose(false)"
+  >
     <contacts-create-edit-form :data="dataDetail" :onClose="onClose" />
   </modal>
 </template>
@@ -95,6 +118,9 @@ export default defineComponent({
       ) {
         if (data) {
           await store.dispatch("contact/deleteContact", data?.id);
+          router.push(`/contact`).then(() => {
+            loadData();
+          });
         }
       }
     };
@@ -102,6 +128,11 @@ export default defineComponent({
     const setDataDetail = (itemId) => {
       isOpen.value = true;
       dataDetail.value = store.getters["contact/getContactById"](itemId) || {};
+    };
+
+    const formatDate = (date) => {
+      const convertDate = date.toString();
+      return convertDate.substring(0, 10) + " " + convertDate.substring(11, 19);
     };
 
     return {
@@ -113,6 +144,7 @@ export default defineComponent({
       dataDetail,
       setDataDetail,
       confirmDelete,
+      formatDate,
     };
   },
 });

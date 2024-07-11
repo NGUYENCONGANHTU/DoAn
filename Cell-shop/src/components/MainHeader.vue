@@ -1,6 +1,6 @@
 <template>
   <div>
-    <async-loading :isLoading="loading">
+    <async-loading :isLoading="loading" >
       <nav class="main-header navbar navbar-expand navbar-white navbar-light">
         <!-- Left navbar links -->
         <ul class="navbar-nav">
@@ -13,7 +13,7 @@
             <a href="index3.html" class="nav-link">Home</a>
           </li>
           <li class="nav-item d-none d-sm-inline-block">
-            <a href="/contact" class="nav-link">Contact</a>
+            <a href="#" class="nav-link">Contact</a>
           </li>
         </ul>
 
@@ -52,9 +52,7 @@
           </li>
           <li class="nav-item">
             <a
-              :class="`nav-link dropdown-toggle ${
-                checkAdmin ? 'text-primary' : ''
-              }`"
+              :class="`nav-link dropdown-toggle ${ checkAdmin ? 'text-primary' : ''}`"
               href="#"
               role="button"
               data-bs-toggle="dropdown"
@@ -62,7 +60,7 @@
             >
               {{ userInfo?.email }}
             </a>
-            <ul class="dropdown-menu" style="right: 5px; left: auto">
+            <ul class="dropdown-menu" style="right:5px;left: auto">
               <li>
                 <a class="dropdown-item text-primary text_profile" href="#">
                   <font-awesome-icon
@@ -80,11 +78,7 @@
               </li>
               <li><hr class="dropdown-divider" /></li>
               <li>
-                <a
-                  class="dropdown-item text-danger text_profile"
-                  @click="handelLogout"
-                  href="#"
-                >
+                <a class="dropdown-item text-danger text_profile" @click="handelLogout" href="#">
                   <font-awesome-icon :icon="['fas', 'right-from-bracket']" />
                   logout
                 </a>
@@ -97,7 +91,7 @@
   </div>
 </template>
 <script>
-import { defineComponent, ref, onMounted, computed } from "vue";
+import { defineComponent, ref, onMounted,computed } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { Constants } from "@/constants/constants";
@@ -108,7 +102,7 @@ import AsyncLoading from "./AsyncLoading.vue";
 
 export default defineComponent({
   components: {
-    AsyncLoading,
+    AsyncLoading
   },
   setup() {
     // declare store
@@ -116,15 +110,15 @@ export default defineComponent({
     const router = useRouter();
     const userInfo = ref(null);
     const checkAdmin = ref(false);
-
+   
     const handelLogout = async () => {
       try {
-        await store.dispatch("auth/logout");
-        router.push("/login").then(() => {
-          toast.success(`status: ${Constants.OK200}: logout successfully`);
-        });
+         await store.dispatch('auth/logout')
+            router.push('/login').then(() => {
+              toast.success(`status: ${Constants.OK200}: logout successfully`)
+          })
       } catch (error) {
-        toast.error(`status: ${Constants.Error}: logout failed!!!`);
+        toast.error(`status: ${Constants.Error}: logout failed!!!`)
       }
     };
 
@@ -133,27 +127,27 @@ export default defineComponent({
       if (!me) {
         userInfo.value = "";
       }
-      if (me?.roles[0].name === "super-admin") {
+      if(me?.roles[0].name === "super-admin"){
         checkAdmin.value = true;
-      } else {
+      }else{
         checkAdmin.value = false;
       }
       userInfo.value = me;
     };
 
     // Getter computed property to get loading state
-    const loading = computed(() => store.getters["auth/isLoading"]);
-
+    const loading = computed(() => store.getters['auth/isLoading']);
+    
     onMounted(() => {
       showUserInfo();
     });
 
-    return {
+    return { 
       handelLogout,
       userInfo,
       checkAdmin,
-      loading,
-    };
+      loading
+    }
   },
 });
 </script>
@@ -163,22 +157,22 @@ export default defineComponent({
 }
 .cus_dropdown_menu {
   position: absolute;
-  top: 100%;
-  right: 5px;
-  z-index: 1000;
-  display: none;
-  float: left;
-  min-width: 10rem;
-  padding: 0.5rem 0;
-  margin: 0.125rem 0 0;
-  font-size: 1rem;
-  color: #212529;
-  text-align: left;
-  list-style: none;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 0.25rem;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+    top: 100%;
+    right: 5px;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 10rem;
+    padding: .5rem 0;
+    margin: .125rem 0 0;
+    font-size: 1rem;
+    color: #212529;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, .15);
+    border-radius: .25rem;
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .175);
 }
 </style>

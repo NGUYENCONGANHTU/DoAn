@@ -15,7 +15,7 @@
     <category-table :data="data" />
     <pagination
       :limit="LIMIT_PAGE"
-      :count="data.length"
+      :count="countData"
       @pageChange="onPageChange"
     />
   </div>
@@ -47,6 +47,7 @@ export default defineComponent({
     const data = computed(() => store.getters["category/dataCategory"]);
     const LIMIT_PAGE = ref(Constants.LIMIT);
     const currentPage = ref(1);
+    const countData = ref(0);
 
     const query = reactive({
       name: "",
@@ -82,6 +83,9 @@ export default defineComponent({
         name: "",
       };
       await store.dispatch("category/getAll", { params: param });
+      if (data.length > 0) {
+        countData.value = data.length;
+      }
     });
 
     return {
@@ -90,6 +94,7 @@ export default defineComponent({
       LIMIT_PAGE,
       onPageChange,
       clearFrom,
+      countData,
     };
   },
 });

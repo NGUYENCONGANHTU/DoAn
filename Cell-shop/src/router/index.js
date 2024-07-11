@@ -21,6 +21,21 @@ const routes = [
         component: () => import("@/views/banner/index.vue"),
       },
       {
+        path: "/product",
+        name: "product",
+        component: () => import("@/views/product/index.vue"),
+      },
+      // {
+      //   path:"/product/create",
+      //   name:"productCreate",
+      //   component:() => import("@/views/product/create.vue"),
+      // },
+      {
+        path: "/product/update/:id",
+        name: "productUpdate",
+        component: () => import("@/views/product/_id.vue"),
+      },
+      {
         path: "/category",
         component: () => import("@/views/category/index.vue"),
       },

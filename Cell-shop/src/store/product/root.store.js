@@ -21,6 +21,7 @@ const productRootStore = {
 
         setCakeData(state, data) {
             state.product = data
+            console.log(state.product);
         },
 
         addCakeProduct(state, newData) {
@@ -47,7 +48,7 @@ const productRootStore = {
                 const queryString = Object.keys(params)
                 .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
                 .join('&');
-                const response = await productService.getProducts(`/api/admins/product?${ queryString }`)
+                const response = await productService.getProducts(`/api/admins/products?${ queryString }`)
                 if (response) {
                     commit('setCakeData', response)
                     setTimeout(() => {
@@ -60,13 +61,15 @@ const productRootStore = {
             }
         },
 
-        async productDetail ({ commit },{ id } ) {
+        async productDetail ({ commit }, id ) {
             try {
                 commit('isLoading', true)
-                const response = await productService.getProduct(`/api/admins/product/show/${id}`)
+                const response = await productService.getProduct(`/api/admins/product/show/`+ id)
                 if (response) {
-                    commit('setCakeData', [response])
-                    commit('isLoading', false);
+                    commit('setCakeData', [ response ])
+                    setTimeout(() => {
+                        commit('isLoading', false);
+                    },1000)
                 }
             } catch (error) {
                 commit('isLoading', true)

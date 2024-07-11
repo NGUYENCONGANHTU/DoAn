@@ -13,29 +13,45 @@
       <table class="table table-hover text-nowrap">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Tài khoản</th>
-            <th>Tên</th>
-            <th>Địa chỉ</th>
-            <th>Email</th>
-            <th>Số điện thoại</th>
-            <th>Trạng thái</th>
+            <th class="itemTH">ID</th>
+            <th class="itemTH">Tài khoản</th>
+            <th class="itemTH">Tên</th>
+            <th class="itemTH">Địa chỉ</th>
+            <th class="itemTH">Email</th>
+            <th class="itemTH">Số điện thoại</th>
+            <th class="itemTH">Trạng thái</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="user in data" :key="user.id">
-            <td>{{ user.id }}</td>
-            <td>{{ user.name }}</td>
-            <td>
-              <span v-if="user.status == 1" class="badge rounded-pill bg-success">Action</span>
-              <span v-else class="badge rounded-pill bg-secondary">InAction</span>
+            <td class="itemTd">{{ user.id }}</td>
+            <td class="itemTd">{{ user.name }}</td>
+            <td class="itemTd">
+              <span
+                v-if="user.status == 1"
+                class="badge rounded-pill bg-success"
+                >Action</span
+              >
+              <span v-else class="badge rounded-pill bg-secondary"
+                >InAction</span
+              >
             </td>
-            <td>{{ formatDate(user.created_at) }}</td>
-            <td>
-              <font-awesome-icon :icon="['far', 'eye']" class="text-warning pointer" />
-              <font-awesome-icon :icon="['fas', 'link']" @click="setDataDetail(user.id)"
-                class="text-primary mx-3 pointer" />
-              <font-awesome-icon :icon="['fas', 'trash']" @click="confirmDelete(user)" class="text-danger pointer" />
+            <td class="itemTd">{{ formatDate(user.created_at) }}</td>
+            <td class="itemTd">
+              <font-awesome-icon
+                :icon="['far', 'eye']"
+                class="text-warning pointer"
+              />
+              <font-awesome-icon
+                :icon="['fas', 'link']"
+                @click="setDataDetail(user.id)"
+                class="text-primary mx-3 pointer"
+              />
+              <font-awesome-icon
+                :icon="['fas', 'trash']"
+                @click="confirmDelete(user)"
+                class="text-danger pointer"
+              />
             </td>
           </tr>
         </tbody>
@@ -92,16 +108,23 @@ export default defineComponent({
     };
 
     const confirmDelete = async (user) => {
-      if (window.confirm(`Are you sure you want to delete item ${user?.name}?`)) {
+      if (
+        window.confirm(`Are you sure you want to delete item ${user?.name}?`)
+      ) {
         if (user) {
           await store.dispatch("user/deleteUser", user?.id);
+          router.push(`/user`).then(() => {
+            loadData();
+          });
         }
       }
     };
 
     const setDataDetail = (userId) => {
       isOpen.value = true;
-      dataDetail.value = computed(() => store.getters["user/getUserById"](userId)).value;
+      dataDetail.value = computed(() =>
+        store.getters["user/getUserById"](userId)
+      ).value;
     };
 
     return {

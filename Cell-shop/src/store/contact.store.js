@@ -122,7 +122,7 @@ const contactStore = {
           `/api/admins/contact/destroy/${id}`
         );
         if (response) {
-          commit("deleteCakeContact", response);
+          commit("deleteCakeContact", id);
           commit("isLoading", false);
         }
       } catch (error) {
