@@ -16,28 +16,28 @@
       <table class="table table-hover text-nowrap">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Image</th>
-            <th>Price</th>
-            <th>Category</th>
-            <th>Trademark</th>
-            <th>View</th>
-            <th>Purchases</th>
-            <th>Status</th>
-            <th>Date</th>
+            <th class="itemTH">ID</th>
+            <th class="itemTH">Name</th>
+            <th class="itemTH">Image</th>
+            <th class="itemTH">Price</th>
+            <th class="itemTH">Category</th>
+            <th class="itemTH">Trademark</th>
+            <th class="itemTH">View</th>
+            <th class="itemTH">Purchases</th>
+            <th class="itemTH">Status</th>
+            <th class="itemTH">Date</th>
           </tr>
         </thead>
         <tbody v-for="product in data" :key="product.id">
           <tr>
-            <td>
+            <td class="itemTd">
               {{ product.id }}
             </td>
-            <td>{{ product.name }}</td>
-            <td>
+            <td class="itemTd">{{ product.name }}</td>
+            <td class="itemTd">
               <img :src="url + '/' + product.images" width="70" alt="" />
             </td>
-            <td class="item-text">
+            <td class="itemTd">
               <span
                 :class="`${
                   product.sale_price > 0 ? 'text-decoration-line-through' : ''
@@ -59,11 +59,11 @@
                   : ""
               }}
             </td>
-            <td>{{ product.category[0].name }}</td>
-            <td>{{ product.trademark[0].name }}</td>
-            <td>{{ product.is_view }}</td>
-            <td>{{ product.is_purchases }}</td>
-            <td>
+            <td class="itemTd">{{ product.category[0].name }}</td>
+            <td class="itemTd">{{ product.trademark[0].name }}</td>
+            <td class="itemTd">{{ product.is_view }}</td>
+            <td class="itemTd">{{ product.is_purchases }}</td>
+            <td class="itemTd">
               <span
                 v-if="product.status == 1"
                 class="badge rounded-pill bg-success"
@@ -73,8 +73,8 @@
                 >InAction</span
               >
             </td>
-            <td>{{ formatDate(product.created_at) }}</td>
-            <td>
+            <td class="itemTd">{{ formatDate(product.created_at) }}</td>
+            <td class="itemTd">
               <font-awesome-icon
                 :icon="['far', 'eye']"
                 class="text-warning pointer"
@@ -163,6 +163,9 @@ export default defineComponent({
       ) {
         if (data) {
           await store.dispatch("productRoot/deleteProduct", data?.id);
+          router.push(`/product`).then(() => {
+            loadData()
+          })
         }
       }
     };

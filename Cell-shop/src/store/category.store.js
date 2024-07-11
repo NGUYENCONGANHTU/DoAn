@@ -121,7 +121,7 @@ const categoryStore = {
           `/api/admins/category/destroy/${id}`
         );
         if (response) {
-          commit("deleteCakeCategory", response);
+          commit("deleteCakeCategory", id);
           commit("isLoading", false);
         }
       } catch (error) {

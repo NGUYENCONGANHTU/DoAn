@@ -32,6 +32,6 @@ export const MENU_DEFAULT_APP = [
   {
     name: "Contact",
     path: "/contact",
-    icon: "address-book",
+    icon: "images",
   },
 ];

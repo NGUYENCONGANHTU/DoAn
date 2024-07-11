@@ -121,7 +121,7 @@ const trademarkStore = {
           `/api/admins/trademark/destroy/${id}`
         );
         if (response) {
-          commit("deleteCakeTrademark", response);
+          commit("deleteCakeTrademark", id);
           commit("isLoading", false);
         }
       } catch (error) {

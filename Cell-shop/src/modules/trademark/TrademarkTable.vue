@@ -16,19 +16,19 @@
       <table class="table table-hover text-nowrap">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Date</th>
+            <th class="itemTH">ID</th>
+            <th class="itemTH">Name</th>
+            <th class="itemTH">Status</th>
+            <th class="itemTH">Date</th>
           </tr>
         </thead>
         <tbody v-for="trademark in data" :key="trademark.id">
           <tr>
-            <td>
+            <td class="itemTd">
               {{ trademark.id }}
             </td>
-            <td>{{ trademark.name }}</td>
-            <td>
+            <td class="itemTd">{{ trademark.name }}</td>
+            <td class="itemTd">
               <span
                 v-if="trademark.status == 1"
                 class="badge rounded-pill bg-success"
@@ -38,8 +38,8 @@
                 >InAction</span
               >
             </td>
-            <td>{{ formatDate(trademark.created_at) }}</td>
-            <td>
+            <td class="itemTd">{{ formatDate(trademark.created_at) }}</td>
+            <td class="itemTd">
               <font-awesome-icon
                 :icon="['far', 'eye']"
                 class="text-warning pointer"
@@ -74,6 +74,7 @@ import TrademarkCreateEditForm from "./TrademarkCreateEditForm.vue";
 import Modal from "@/components/Modal.vue";
 import { useStore } from "vuex";
 import { onReload } from "@/helpers/reload.helpers";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   components: {
@@ -92,6 +93,7 @@ export default defineComponent({
     const store = useStore();
     const isOpen = ref(false);
     const dataDetail = ref({});
+    const router = useRouter();
 
     const onClose = (value) => {
       isOpen.value = value;
@@ -121,6 +123,9 @@ export default defineComponent({
       ) {
         if (data) {
           await store.dispatch("trademark/deleteTrademark", data?.id);
+          router.push(`/trademark`).then(() => {
+            loadData();
+          });
         }
       }
     };

@@ -1,3 +1,10 @@
 .pointer {
     cursor: pointer;
 }
+.itemTH {
+    font-size: 14px;
+}
+
+.itemTd {
+    font-size: 13px;
+}

@@ -82,49 +82,15 @@
           rules="required"
         />
       </div>
-      <div class="col-12">
-        <label
-          for="inputEmail4"
-          class="form-label fw-bold mt-3 has-required-sign"
-          >Note <span class="mx-1 text-danger">*</span></label
-        >
-        <Field
-          type="text"
-          v-model="model.content"
-          class="form-control input-admin-form"
-          name="content"
-          placeholder="....."
-          rules="required"
-        />
-      </div>
-      <div class="col-6">
-        <label
-          for="inputEmail4"
-          class="form-label fw-bold mt-3 has-required-sign"
-          >Ngày tạo <span class="mx-1 text-danger">*</span></label
-        >
-        <Field
-          type="date"
-          v-model="model.created_at"
-          class="form-control input-admin-form"
-          name="created_at"
-          placeholder="0982199879"
-          rules="required"
-        />
-      </div>
-      <div class="col-6">
-        <label
-          for="inputEmail4"
-          class="form-label fw-bold mt-3 has-required-sign"
-          >Ngày cập nhật <span class="mx-1 text-danger">*</span></label
-        >
-        <Field
-          type="date"
-          v-model="model.updated_at"
-          class="form-control input-admin-form"
-          name="updated_at"
-          rules="required"
-        />
+      <div class="col-12 mt-3">
+        <div class="editor">
+          <label for="inputAddress" class="form-label fw-bold mt-3">Note</label>
+          <ckeditor
+            :editor="editor"
+            v-model="model.content"
+            :config="editorConfig"
+          />
+        </div>
       </div>
       <div
         class="d-flex justify-content-center align-items-center mt-5 mb-3 w-100"
@@ -183,8 +149,9 @@ export default defineComponent({
       id: "",
       name: "",
       status: 0,
-      description: "",
-      isUpload: "",
+      phone: "",
+      email: "",
+      content: "",
     });
 
     // config
@@ -238,8 +205,6 @@ export default defineComponent({
           (model.phone = props.data.phone),
           (model.email = props.data.email),
           (model.content = props.data.content),
-          (model.created_at = props.data.created_at),
-          (model.updated_at = props.data.updated_at),
           (model.status = props.status);
       }
     });

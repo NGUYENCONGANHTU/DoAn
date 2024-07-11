@@ -16,24 +16,24 @@
       <table class="table table-hover text-nowrap">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Product</th>
-            <th>Type</th>
-            <th>Attribute</th>
-            <th>Status</th>
-            <th>Date</th>
+            <th class="itemTH">ID</th>
+            <th class="itemTH">Product</th>
+            <th class="itemTH">Type</th>
+            <th class="itemTH">Attribute</th>
+            <th class="itemTH">Status</th>
+            <th class="itemTH">Date</th>
           </tr>
         </thead>
         <tbody v-for="attribute in data" :key="attribute.id">
           <tr>
-            <td>
+            <td class="itemTd">
               {{ attribute.id }}
             </td>
-            <td>
+            <td class="itemTd">
               {{ attribute.product.name }}
             </td>
             <td
-              class="item-text"
+              class="itemTd"
               v-if=" attribute?.product_attribute.status == 1"
             >
               <div
@@ -41,8 +41,8 @@
                 :style="{ background:  attribute?.product_attribute.value }"
               ></div>
             </td>
-            <td class="item-text" v-else>{{  attribute?.product_attribute.value }}</td>
-            <td>
+            <td class="itemTd" v-else>{{  attribute?.product_attribute.value }}</td>
+            <td class="itemTd">
               <span
                 v-if="attribute.status == 1"
                 class="badge rounded-pill bg-success"
@@ -52,15 +52,15 @@
                 >InAction</span
               >
             </td>
-            <td>{{ formatDate(attribute.created_at) }}</td>
-            <td>
+            <td class="itemTd">{{ formatDate(attribute.created_at) }}</td>
+            <td class="itemTd">
               <font-awesome-icon
                 :icon="['far', 'eye']"
                 class="text-warning pointer"
               />
               <font-awesome-icon
                 :icon="['fas', 'link']"
-                @click="goDetail(attribute.id)"
+                @click="setDataDetail(attribute.id)"
                 class="text-primary mx-3 pointer"
               />
               <font-awesome-icon
@@ -75,6 +75,9 @@
     </div>
   </async-loading>
   <!-- add attribute and edit attribute -->
+  <modal :visible="isOpen" :id="checkIdEdit" @closeModal="onClose(false)">
+    <product-attribute-create-edit-form-vue  :data="dataDetail" :onClose="onClose"  />
+  </modal>
 </template>
 
 <script>
@@ -87,11 +90,13 @@ import { URL_API } from "@/constants/env";
 import { useStore } from "vuex";
 import { onReload } from "@/helpers/reload.helpers";
 import { useRouter } from "vue-router";
+import ProductAttributeCreateEditFormVue from "./ProductAttributeCreateEditForm.vue";
 
 export default defineComponent({
   components: {
     AsyncLoading,
     Modal,
+    ProductAttributeCreateEditFormVue
   },
   props: {
     data: {
@@ -105,6 +110,7 @@ export default defineComponent({
     const isOpen = ref(false);
     const dataDetail = ref({});
     const router = useRouter();
+    const checkIdEdit = ref(0);
 
     const state = reactive({
       url: ref(URL_API),
@@ -130,12 +136,14 @@ export default defineComponent({
     };
 
     const confirmDelete = async (data) => {
-      console.log(data.name);
       if (
-        window.confirm(`Are you sure you want to delete item ${data?.name} ?`)
+        window.confirm(`Are you sure you want to delete item ${data?.product_attribute.name} - ${data?.product_attribute.value} ?`)
       ) {
         if (data) {
-          await store.dispatch("productDetail/deleteProductImage", data?.id);
+          await store.dispatch("productDetail/deleteProductAttribute", data?.id);
+          router.push(`/product/update/${data?.id}`).then(() => {
+            loadData()
+          })
         }
       }
     };
@@ -143,8 +151,9 @@ export default defineComponent({
     const setDataDetail = (itemId) => {
       // show modal
       isOpen.value = true;
+      checkIdEdit.value = itemId;
       dataDetail.value = computed(() =>
-        store.getters["productDetail/getProductImageById"](itemId)
+        store.getters["productDetail/getProductAttributeById"](itemId)
       ).value;
     };
 
@@ -163,6 +172,7 @@ export default defineComponent({
       setDataDetail,
       confirmDelete,
       goDetail,
+      checkIdEdit
     };
   },
 });

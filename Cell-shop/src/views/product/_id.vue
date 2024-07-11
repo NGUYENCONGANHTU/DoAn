@@ -1,5 +1,5 @@
 <template >
-  <async-loading :isLoading="false">
+  <async-loading :isLoading="loading">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header bg-primary">
@@ -29,7 +29,7 @@
               <font-awesome-icon :icon="['fas', 'arrow-rotate-left']" />
             </router-link>
           </div>
-          <ProductAttributeTableVue :data="dataProductAttribute" />
+          <product-attribute-table-vue :data="dataProductAttribute" />
         </div>
 
       </div>
@@ -67,20 +67,25 @@ export default defineComponent({
 
     const dataDetail = computed(() =>
       store.getters["productRoot/getProductById"](Number(route.params.id))
-    ).value;
+    );
 
     const dataProductAttribute = computed(() =>
       store.getters["productDetail/dataProductAttribute"]
-    ).value;
+    );
     
     const dataProductImage = computed(
       () => store.getters["productDetail/dataProductImage"]
-    ).value;
+    );
+
+    const loading = computed(() =>
+      store.getters["productRoot/loadData"]
+    );
 
     onMounted(async () => {
         const param = {
             product_id: Number(route.params.id),
         }
+      await store.dispatch("productRoot/productDetail", Number(route.params.id));
       await store.dispatch("productDetail/getAllProductAttribute", { params: param });
       await store.dispatch("productDetail/getAllProductImage", { params: param });
     });
@@ -88,7 +93,8 @@ export default defineComponent({
     return {
       dataDetail,
       dataProductImage,
-      dataProductAttribute
+      dataProductAttribute,
+      loading
     };
   },
 });
