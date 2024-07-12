@@ -1,16 +1,16 @@
 import { createStore } from "vuex";
-import { UserService } from "@/service/user.service";
+import { OrderService } from "@/service/order/order.service";
 
 // declare class AuthService
-const userService = new UserService();
+const orderService = new OrderService();
 
-const userStore = {
+const orderStore = {
   //Allow modules to have namespace to avoid conflicts with other modules
   namespaced: true,
 
   state: {
     loading: false,
-    user: [],
+    order: [],
   },
 
   mutations: {
@@ -19,13 +19,13 @@ const userStore = {
     },
 
     setCakeData(state, data) {
-      state.user = data;
+      state.order = data;
     },
 
-    updateCakeUser(state, update) {
-      const index = state.user.findIndex((item) => item.id === update.id);
+    updateCakeOrder(state, update) {
+      const index = state.order.findIndex((item) => item.id === update.id);
       if (index !== -1) {
-        state.user[index] = update;
+        state.order[index] = update;
       }
     },
   },
@@ -33,7 +33,7 @@ const userStore = {
   getters: {
     //TODO: Computed properties
     isLoading: (state) => state.loading,
-    dataUser: (state) => state.user,
+    dataOrder: (state) => state.order,
   },
 
   actions: {
@@ -46,8 +46,8 @@ const userStore = {
               `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
           )
           .join("&");
-        const response = await userService.getUsers(
-          `/api/admins/users?${queryString}`
+        const response = await orderService.getOrders(
+          `/api/admins/orders?${queryString}`
         );
         if (response) {
           commit("setCakeData", response);
@@ -61,11 +61,11 @@ const userStore = {
       }
     },
 
-    async userDetail({ commit }, id) {
+    async orderDetail({ commit }, id) {
       try {
         commit("isLoading", true);
-        const response = await userService.getUser(
-          `/api/admins/user/show/` + id
+        const response = await orderService.getOrder(
+          `/api/admins/order/show/` + id
         );
         if (response) {
           commit("setCakeData", [response]);
@@ -79,15 +79,15 @@ const userStore = {
       }
     },
 
-    async updateUser({ commit }, params) {
+    async updateOrder({ commit }, params) {
       try {
         commit("isLoading", true);
-        const response = await userService.updateUser(
-          `/api/admins/category/user/${params.id}`,
+        const response = await orderService.updateOrder(
+          `/api/admins/category/order/${params.id}`,
           params
         );
         if (response) {
-          commit("updateCakeUser", response);
+          commit("updateCakeOrder", response);
           commit("isLoading", false);
         }
       } catch (error) {
@@ -97,4 +97,4 @@ const userStore = {
     },
   },
 };
-export default userStore;
+export default orderStore;

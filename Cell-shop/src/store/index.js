@@ -7,6 +7,10 @@ import productDetailRootStore from "./product/detail.store";
 import categoryStore from "./category.store";
 import trademarkStore from "./trademark.store";
 import contactStore from "./contact.store";
+import userStore from "./user.store";
+import productReviewStore from "./product-review.store";
+import orderDetailStore from "./order/order-detail.store";
+import orderStore from "./order/order.store";
 
 const store = createStore({
   modules: {
@@ -17,6 +21,10 @@ const store = createStore({
     category: categoryStore,
     trademark: trademarkStore,
     contact: contactStore,
+    user: userStore,
+    order: orderStore,
+    orderDetail: orderDetailStore,
+    productReview: productReviewStore,
   },
 });
 
