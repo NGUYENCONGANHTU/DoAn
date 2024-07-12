@@ -1,7 +1,7 @@
 <template>
   <async-loading :isLoading="loading">
     <div class="card-header">
-      <h3 class="card-title">List User</h3>
+      <h3 class="card-title">List Order</h3>
       <div class="card-tools">
         <button type="button" @click="onShow" class="btn btn-primary">
           <font-awesome-icon :icon="['fas', 'plus']" />
@@ -17,25 +17,22 @@
         <thead>
           <tr>
             <th class="itemTH">ID</th>
-            <th class="itemTH">Số điện thoại</th>
-            <th class="itemTH">Tuổi</th>
+            <th class="itemTH">Tên Khách Hàng</th>
             <th class="itemTH">Email</th>
             <th class="itemTH">Địa chỉ</th>
-            <th class="itemTH">Ngày tạo</th>
+            <th class="itemTH">Số điện thoại</th>
             <th class="itemTH">Trạng thái</th>
           </tr>
         </thead>
-        <tbody>
-          <tr v-for="user in data" :key="user.id">
-            <td class="itemTd">{{ user.id }}</td>
-            <td class="itemTd">{{ user.phone }}</td>
-            <td class="itemTd">{{ user.age }}</td>
-            <td class="itemTd">{{ user.email }}</td>
-            <td class="itemTd">{{ user.address }}</td>
-            <td class="itemTd">{{ formatDate(user.created_at) }}</td>
+        <tbody v-for="order in data" :key="order.id">
+          <tr>
+            <td class="itemTd">
+              {{ order.id }}
+            </td>
+            <td class="itemTd">{{ order.name }}</td>
             <td class="itemTd">
               <span
-                v-if="user.status == 1"
+                v-if="order.status == 1"
                 class="badge rounded-pill bg-success"
                 >Action</span
               >
@@ -43,6 +40,7 @@
                 >InAction</span
               >
             </td>
+            <td class="itemTd">{{ formatDate(order.created_at) }}</td>
             <td class="itemTd">
               <font-awesome-icon
                 :icon="['far', 'eye']"
@@ -50,12 +48,12 @@
               />
               <font-awesome-icon
                 :icon="['fas', 'link']"
-                @click="setDataDetail(user.id)"
+                @click="setDataDetail(order.id)"
                 class="text-primary mx-3 pointer"
               />
               <font-awesome-icon
                 :icon="['fas', 'trash']"
-                @click="confirmDelete(user)"
+                @click="confirmDelete(order)"
                 class="text-danger pointer"
               />
             </td>
@@ -64,23 +62,26 @@
       </table>
     </div>
   </async-loading>
+  <!-- add category and edit category -->
   <modal :visible="isOpen" :id="dataDetail.id" @closeModal="onClose(false)">
-    <user-detail :data="dataDetail" :onClose="onClose" />
+    <order-create-edit-form :data="dataDetail" :onClose="onClose" />
   </modal>
 </template>
 
 <script>
-import { defineComponent, ref, onMounted, computed } from "vue";
+import { defineComponent, ref, onMounted, computed, reactive } from "vue";
+// import loading base app
 import AsyncLoading from "@/components/AsyncLoading.vue";
-import UserDetail from "./UserDetail.vue";
+import OrderCreateEditForm from "./OrderCreateEditForm.vue";
 import Modal from "@/components/Modal.vue";
 import { useStore } from "vuex";
 import { onReload } from "@/helpers/reload.helpers";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   components: {
     AsyncLoading,
-    UserDetail,
+    OrderCreateEditForm,
     Modal,
   },
   props: {
@@ -90,9 +91,11 @@ export default defineComponent({
     },
   },
   setup() {
+    // declare store
     const store = useStore();
     const isOpen = ref(false);
     const dataDetail = ref({});
+    const router = useRouter();
 
     const onClose = (value) => {
       isOpen.value = value;
@@ -103,34 +106,37 @@ export default defineComponent({
       dataDetail.value = {};
     };
 
-    const loading = computed(() => store.getters["user/loadData"]);
+    const loading = computed(() => store.getters["category/loadData"]);
 
     const formatDate = (date) => {
       const convertDate = date.toString();
       return convertDate.substring(0, 10) + " " + convertDate.substring(11, 19);
     };
 
+    // load page helpers base
     const loadData = () => {
       onReload();
     };
 
-    const confirmDelete = async (user) => {
+    const confirmDelete = async (data) => {
+      console.log(data.name);
       if (
-        window.confirm(`Are you sure you want to delete item ${user?.name}?`)
+        window.confirm(`Are you sure you want to delete item ${data?.name} ?`)
       ) {
-        if (user) {
-          await store.dispatch("user/deleteUser", user?.id);
-          router.push(`/user`).then(() => {
+        if (data) {
+          await store.dispatch("category/deleteCategory", data?.id);
+          router.push(`/category`).then(() => {
             loadData();
           });
         }
       }
     };
 
-    const setDataDetail = (userId) => {
+    const setDataDetail = (itemId) => {
+      // show modal
       isOpen.value = true;
       dataDetail.value = computed(() =>
-        store.getters["user/getUserById"](userId)
+        store.getters["category/getCategoryById"](itemId)
       ).value;
     };
 
